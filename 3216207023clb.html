@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>实验六</title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.29/"></script>
+
+    <script>
+        require(["esri/Map",
+            "esri/views/MapView",
+            "esri/layers/FeatureLayer",
+            "esri/widgets/ScaleBar",
+            "esri/widgets/Search",
+            "esri/widgets/Legend",
+            "esri/widgets/Home",
+            "esri/widgets/LayerList",
+            "esri/widgets/Locate"
+
+        ],
+            (Map, MapView, FeatureLayer, ScaleBar, Search, Legend, Home, LayerList, Locate) => {
+                const sports = new FeatureLayer({
+                    url: "https://www.geosceneonline.cn/server/rest/services/Hosted/台江区健身/FeatureServer/0"
+                });
+
+                // const medicals = new FeatureLayer({
+                //     url: "https://www.geosceneonline.cn/server/rest/services/Hosted/%E5%8F%B0%E6%B1%9F%E5%8C%BA%E5%8C%BB%E7%96%97%E7%82%B9%E4%BF%AE%E6%94%B9/FeatureServer"
+                // });
+
+                const map1 = new Map({
+                    basemap: "topo",
+                    layers: [sports]         //,medicals
+                });
+
+                const view1 = new MapView({
+                    container: "viewDiv",
+                    map: map1,
+                    zoom: 14,
+                    center: [119.3200, 26.062] // longitude, latitude
+                });
+
+
+                //添加比例尺------------------------------
+                let scaleBar = new ScaleBar({
+                    view: view1,
+                    style: "ruler",
+                    unit: "metric"
+                });
+                // Add widget to the bottom left corner of the view
+                view1.ui.add(scaleBar, {
+                    position: "bottom-left",
+
+                });
+                //添加比例尺------------------------------
+
+                //添加搜索框------------------------------
+                const searchWidget = new Search({
+                    view: view1,
+                    label: "请输入要查询的地点……"
+                });
+                // Adds the search widget below other elements in
+                // the top left corner of the view
+                view1.ui.add(searchWidget, {
+                    position: "top-right",
+                    index: 2
+                });
+                //添加搜索框------------------------------
+
+                //添加图例--------------------------------
+                let legend = new Legend({
+                    view: view1,
+                    // title: "台江区运动健身点",
+                    layer: "sports"
+                });
+
+                view1.ui.add(legend, "bottom-right");
+                //添加图例--------------------------------
+
+                //添加返回初始界面按钮-----------
+                let homeWidget = new Home({
+                    view: view1
+                });
+                // adds the home widget to the top left corner of the MapView
+                view1.ui.add(homeWidget, "top-left");
+                //添加返回初始界面按钮-----------
+
+                //添加图层列表--------------------
+                let layerList = new LayerList({
+                    view: view1
+                });
+                // Adds widget below other elements in the top left corner of the view
+                view1.ui.add(layerList, {
+                    position: "bottom-left"
+                });
+                //添加图层列表--------------------
+
+                //添加定位点微件------------------无法使用  不知道为什么
+                let locateWidget = new Locate({
+                    view: view1,   // Attaches the Locate button to the view
+                    graphic: new Graphic({
+                        symbol: { type: "simple-marker" }  // overwrites the default symbol used for the
+                        // graphic placed at the location of the user when found
+                    })
+                });
+                view1.ui.add(locateWidget, "top-left");
+                //添加定位点微件------------------
+
+                
+            });
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+</body>
+
+</html>
